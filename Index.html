@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoResidencial | Modelo de Gestión Circular de Residuos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:    #1a4a2e;
+  --verde-med:#2d6a45;
+  --verde-clr:#3d8a5a;
+  --lima:     #9dc840;
+  --lima-suave:#bfe06a;
+  --crema:    #f7f3ec;
+  --tierra:   #c9a96e;
+  --gris-osc: #1e1e1e;
+  --gris-med: #2c2c2c;
+  --texto:    #3a3a3a;
+  --texto-clr:#6b6b6b;
+  --blanco:   #ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--crema);
+  color:var(--texto);
+  font-family:'Karla',sans-serif;
+  font-size:16px;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;width:100%;z-index:200;
+  background:rgba(26,74,46,0.97);
+  backdrop-filter:blur(8px);
+  padding:.9rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:900;
+  color:var(--lima);
+  text-decoration:none;letter-spacing:0.02em;
+}
+.nav-logo span{color:var(--blanco);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{
+  color:rgba(255,255,255,.65);
+  text-decoration:none;font-size:.82rem;
+  font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--lima);}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;
+  background:linear-gradient(160deg,var(--verde) 0%,var(--verde-med) 60%,#1e3a28 100%);
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  padding-top:5rem;
+}
+.hero-pattern{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 20% 50%,rgba(157,200,64,.12) 0,transparent 40%),
+    radial-gradient(circle at 80% 20%,rgba(157,200,64,.07) 0,transparent 35%),
+    radial-gradient(circle at 60% 80%,rgba(201,169,110,.08) 0,transparent 30%);
+  pointer-events:none;
+}
+.hero-hex{
+  position:absolute;right:-60px;top:50%;transform:translateY(-50%);
+  width:480px;height:480px;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50V18L28 2l28 16v32L28 66zm0-6l22-13V29L28 16 6 29v18l22 13z' fill='%239dc840'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:1100px;margin:0 auto;padding:0 2.5rem;
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(157,200,64,.15);
+  border:1px solid rgba(157,200,64,.35);
+  border-radius:2rem;padding:.3rem 1rem;
+  font-size:.75rem;font-weight:600;letter-spacing:.12em;
+  color:var(--lima);text-transform:uppercase;
+  margin-bottom:1.8rem;
+  animation:fadeUp .6s ease both;
+}
+.hero-badge::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--lima);animation:pulse 1.8s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3rem,7vw,5.5rem);
+  font-weight:900;line-height:.95;
+  color:var(--blanco);
+  margin-bottom:1.5rem;
+  animation:fadeUp .6s .1s ease both;
+}
+.hero-title em{
+  color:var(--lima);font-style:normal;
+  display:block;
+}
+.hero-sub{
+  font-size:1.05rem;color:rgba(255,255,255,.7);
+  max-width:500px;line-height:1.8;
+  margin-bottom:2.5rem;
+  animation:fadeUp .6s .2s ease both;
+}
+.hero-cta{
+  display:flex;gap:1rem;flex-wrap:wrap;
+  animation:fadeUp .6s .3s ease both;
+}
+.btn-verde{
+  background:var(--lima);color:var(--verde);
+  padding:.8rem 2rem;border-radius:.25rem;
+  font-weight:700;font-size:.9rem;text-decoration:none;
+  letter-spacing:.03em;transition:background .2s,transform .1s;
+}
+.btn-verde:hover{background:var(--lima-suave);transform:translateY(-2px);}
+.btn-out{
+  color:rgba(255,255,255,.8);
+  padding:.8rem 2rem;border-radius:.25rem;
+  border:1px solid rgba(255,255,255,.25);
+  font-weight:500;font-size:.9rem;text-decoration:none;
+  transition:border-color .2s;
+}
+.btn-out:hover{border-color:rgba(255,255,255,.6);}
+/* stats hero */
+.hero-stats{
+  display:flex;flex-direction:column;gap:1.5rem;
+  animation:fadeUp .6s .35s ease both;
+}
+.hstat{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(157,200,64,.2);
+  border-radius:.4rem;padding:1.2rem 1.5rem;
+  text-align:center;min-width:160px;
+}
+.hstat-n{
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem;font-weight:900;color:var(--lima);
+  line-height:1;margin-bottom:.2rem;
+}
+.hstat-l{font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.3;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── SECCIONES BASE ── */
+.s{padding:6rem 2.5rem;max-width:1100px;margin:0 auto;}
+.s-full{padding:6rem 2.5rem;background:var(--verde);color:var(--blanco);}
+.s-full-inner{max-width:1100px;margin:0 auto;}
+.s-alt{background:#f0ede6;}
+
+.chip{
+  display:inline-block;
+  font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--verde-clr);margin-bottom:.8rem;
+}
+.chip-blanco{color:var(--lima-suave);}
+
+h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.9rem,4vw,2.8rem);
+  font-weight:800;line-height:1.1;
+  color:var(--verde);margin-bottom:1.2rem;
+}
+h2.blanco{color:var(--blanco);}
+p.lead{font-size:1.05rem;color:var(--texto-clr);max-width:640px;}
+p.lead-blanco{color:rgba(255,255,255,.7);}
+
+hr.div{border:none;border-top:1px solid #ddd9d0;margin:0;}
+hr.div-verde{border:none;border-top:1px solid rgba(255,255,255,.1);margin:0;}
+
+/* ── EMPRESA / PROBLEMA ── */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+  margin-top:2.5rem;
+}
+.stat-c{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.5rem;padding:1.8rem;
+  border-top:3px solid var(--verde-clr);
+  transition:transform .2s,box-shadow .2s;
+}
+.stat-c:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.07);}
+.stat-n{
+  font-family:'Playfair Display',serif;
+  font-size:2.2rem;font-weight:900;color:var(--verde);
+  margin-bottom:.25rem;
+}
+.stat-l{font-size:.83rem;color:var(--texto-clr);line-height:1.4;}
+.stat-src{font-size:.72rem;color:#aaa;margin-top:.4rem;}
+
+/* soluciones */
+.sol-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.2rem;margin-top:2rem;
+}
+.sol-c{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.4rem;padding:1.5rem;
+  transition:border-color .2s;
+}
+.sol-c:hover{border-color:var(--verde-clr);}
+.sol-tag{
+  display:inline-block;font-size:.68rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--verde-clr);border:1px solid rgba(45,106,69,.3);
+  border-radius:2rem;padding:.15rem .65rem;margin-bottom:.7rem;
+}
+.sol-c h4{font-size:.95rem;font-weight:700;color:var(--verde);margin-bottom:.4rem;}
+.sol-c p{font-size:.84rem;color:var(--texto-clr);margin:0;}
+
+/* ── PERSONA ── */
+.persona-wrap{
+  display:grid;grid-template-columns:90px 1fr;gap:2rem;
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.5rem;padding:2.5rem;
+  align-items:start;margin-bottom:3rem;
+  border-left:4px solid var(--verde-clr);
+}
+.p-av{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--verde),var(--verde-clr));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;flex-shrink:0;
+}
+.p-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.3rem;font-weight:800;color:var(--verde);margin-bottom:.25rem;
+}
+.p-meta{font-size:.83rem;color:var(--verde-clr);margin-bottom:.8rem;font-weight:600;}
+.p-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem;}
+.tag{
+  background:rgba(45,106,69,.08);color:var(--verde-med);
+  font-size:.76rem;padding:.2rem .7rem;
+  border-radius:2rem;border:1px solid rgba(45,106,69,.2);
+}
+
+/* ── JOURNEY MAP ── */
+.journey-wrap{overflow-x:auto;margin:2rem 0;}
+.journey-row{display:flex;gap:0;min-width:700px;align-items:stretch;}
+.j-step{flex:1;position:relative;display:flex;flex-direction:column;}
+.j-step::after{
+  content:'→';position:absolute;top:26px;right:-10px;
+  color:var(--verde-clr);font-size:1.1rem;z-index:1;
+}
+.j-step:last-child::after{display:none;}
+.j-head{
+  background:var(--verde);color:var(--blanco);
+  text-align:center;padding:.65rem .4rem;
+  font-family:'Playfair Display',serif;
+  font-size:.78rem;font-weight:700;letter-spacing:.04em;
+}
+.j-step:nth-child(even) .j-head{background:var(--verde-clr);}
+.j-body{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-top:none;padding:1rem .8rem;
+  font-size:.81rem;color:var(--texto-clr);min-height:120px;
+  flex:1;display:flex;flex-direction:column;
+}
+.j-body strong{display:block;color:var(--verde);margin-bottom:.35rem;font-size:.83rem;}
+.emo{text-align:center;margin-top:auto;padding-top:.7rem;font-size:1.2rem;}
+
+/* ── PROPUESTA DE VALOR ── */
+.val-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:1.5rem;margin-top:2rem;
+}
+.val-col{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.5rem;padding:2rem;
+}
+.val-col h4{
+  font-family:'Playfair Display',serif;
+  font-size:.82rem;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:1.2rem;
+}
+.val-col.jobs h4{color:#1a6896;}
+.val-col.pains h4{color:#a32828;}
+.val-col.gains h4{color:var(--verde-clr);}
+.val-col ul{list-style:none;padding:0;}
+.val-col ul li{
+  font-size:.85rem;color:var(--texto-clr);
+  padding:.45rem 0;border-bottom:1px solid #f0ede6;
+  display:flex;gap:.5rem;align-items:flex-start;
+}
+.val-col ul li:last-child{border-bottom:none;}
+.val-col ul li::before{content:'—';color:#bbb;flex-shrink:0;margin-top:.05rem;}
+
+/* servicios */
+.serv-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:1.2rem;margin-top:2rem;
+}
+.serv-c{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(157,200,64,.2);
+  border-radius:.5rem;padding:2rem 1.5rem;
+  transition:transform .2s,background .2s;
+}
+.serv-c:hover{transform:translateY(-4px);background:rgba(255,255,255,.1);}
+.serv-ico{font-size:2rem;margin-bottom:1rem;display:block;}
+.serv-c h4{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:800;color:var(--blanco);margin-bottom:.5rem;
+}
+.serv-c p{font-size:.84rem;color:rgba(255,255,255,.6);margin:0;}
+
+/* ── IMPACTO ── */
+.imp-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;margin-top:2rem;
+}
+.imp-c{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.5rem;padding:2rem;position:relative;overflow:hidden;
+  transition:transform .2s,border-color .2s;
+}
+.imp-c:hover{transform:translateY(-4px);border-color:var(--verde-clr);}
+.imp-n{
+  position:absolute;top:.5rem;right:1rem;
+  font-family:'Playfair Display',serif;
+  font-size:4.5rem;font-weight:900;
+  color:rgba(45,106,69,.06);line-height:1;
+}
+.imp-c h4{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:800;color:var(--verde);
+  margin-bottom:.6rem;position:relative;
+}
+.imp-c p{font-size:.86rem;color:var(--texto-clr);position:relative;margin:0;}
+
+/* ── CANVAS ── */
+.canvas-wrap{
+  display:grid;
+  grid-template-areas:
+    "socios act prop rel cli"
+    "socios rec prop can cli"
+    "cost  cost prop ing ing";
+  gap:2px;background:#c8c3ba;
+  border-radius:.4rem;overflow:hidden;
+  margin-top:2rem;
+}
+.cv{background:var(--blanco);padding:1.2rem;min-height:130px;}
+.cv h5{
+  font-family:'Playfair Display',serif;
+  font-size:.72rem;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--verde);margin-bottom:.7rem;
+}
+.cv ul{list-style:none;padding:0;}
+.cv ul li{font-size:.8rem;color:var(--texto-clr);padding:.18rem 0;display:flex;gap:.4rem;}
+.cv ul li::before{content:'·';color:var(--verde-clr);}
+.cv-s{grid-area:socios;}
+.cv-a{grid-area:act;}
+.cv-p{grid-area:prop;background:#eef5e9;}
+.cv-p h5{font-size:.78rem;}
+.cv-r{grid-area:rel;}
+.cv-c{grid-area:cli;}
+.cv-rc{grid-area:rec;}
+.cv-cn{grid-area:can;}
+.cv-co{grid-area:cost;}
+.cv-i{grid-area:ing;}
+
+/* monetización */
+.din-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));
+  gap:1rem;margin-top:2rem;
+}
+.din-c{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.4rem;padding:1.2rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.din-ico{font-size:1.4rem;}
+.din-c span{font-size:.85rem;color:var(--texto-clr);}
+
+/* ── PROTOTIPO ── */
+.proto-box{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(157,200,64,.2);
+  border-radius:.5rem;padding:3rem;
+  text-align:center;margin-top:2rem;
+}
+.proto-bdg{
+  display:inline-block;
+  background:rgba(201,169,110,.15);
+  border:1px solid rgba(201,169,110,.35);
+  color:var(--tierra);
+  font-size:.72rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;padding:.3rem .8rem;
+  border-radius:2rem;margin-bottom:1.5rem;
+}
+.proto-box h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:800;color:var(--blanco);margin-bottom:.8rem;
+}
+.proto-box p{color:rgba(255,255,255,.55);max-width:480px;margin:0 auto 2rem;}
+.vid-ph{
+  background:rgba(0,0,0,.3);
+  border:2px dashed rgba(255,255,255,.1);
+  border-radius:.4rem;height:260px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.8rem;
+  max-width:580px;margin:0 auto;
+}
+.play{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--verde-clr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;cursor:pointer;color:var(--blanco);
+  transition:background .2s,transform .1s;
+}
+.play:hover{background:var(--lima);color:var(--verde);transform:scale(1.06);}
+.vid-ph p{color:rgba(255,255,255,.35);font-size:.83rem;margin:0;}
+
+/* ── EQUIPO ── */
+.equipo-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:2rem;margin-top:2.5rem;
+}
+.eq-c{
+  background:var(--blanco);border:1px solid #e0dbd2;
+  border-radius:.5rem;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.eq-c:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.1);}
+.eq-foto{
+  width:100%;height:320px;object-fit:contain;object-position:center;
+  background:#e8e3da;display:block;
+  padding:.35rem;
+}
+.eq-foto-andres{
+  width:88%;
+  margin:0 auto;
+  image-rendering:auto;
+  filter:contrast(1.03) saturate(1.03);
+}
+.eq-foto-placeholder{
+  width:100%;height:320px;
+  background:linear-gradient(135deg,var(--verde),var(--verde-clr));
+  display:flex;align-items:center;justify-content:center;
+  font-size:4rem;
+}
+.eq-body{padding:1.8rem;}
+.eq-nombre{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:800;color:var(--verde);margin-bottom:.15rem;
+}
+.eq-rol{
+  font-size:.8rem;font-weight:700;color:var(--verde-clr);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:.8rem;
+}
+.eq-bio{font-size:.85rem;color:var(--texto-clr);margin-bottom:1.2rem;line-height:1.6;}
+.eq-links{display:flex;gap:.6rem;flex-wrap:wrap;}
+.eq-links a{
+  font-size:.75rem;color:#888;text-decoration:none;
+  border:1px solid #ddd;padding:.2rem .7rem;border-radius:2rem;
+  transition:color .2s,border-color .2s;
+}
+.eq-links a:hover{color:var(--verde);border-color:var(--verde-clr);}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid #ddd9d0;
+  padding:3rem 2.5rem;
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.ft-logo{
+  font-family:'Playfair Display',serif;
+  font-weight:900;font-size:1.1rem;color:var(--verde);
+}
+footer p{color:var(--texto-clr);font-size:.82rem;margin:0;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-stats{flex-direction:row;flex-wrap:wrap;}
+  .hstat{min-width:120px;}
+  .eq-foto,.eq-foto-placeholder{height:260px;}
+  .eq-foto-andres{width:94%;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .val-grid{grid-template-columns:1fr;}
+  .persona-wrap{grid-template-columns:1fr;text-align:center;}
+  .p-av{margin:0 auto;}
+  .p-tags{justify-content:center;}
+  .canvas-wrap{
+    grid-template-areas:"prop" "socios" "act" "rec" "rel" "can" "cli" "cost" "ing";
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:480px){
+  .eq-foto,.eq-foto-placeholder{height:220px;}
+  .eq-foto-andres{width:96%;}
+  .stat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">Eco<span>Residencial</span> ♻</a>
+  <ul class="nav-links">
+    <li><a href="#empresa">Problema</a></li>
+    <li><a href="#productos">Solución</a></li>
+    <li><a href="#impacto">Impacto</a></li>
+    <li><a href="#modelo">Modelo</a></li>
+    <li><a href="#equipo">Equipo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-pattern"></div>
+  <div class="hero-hex"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">Reto Medellín 2026 — Residuos Sólidos</div>
+      <h1 class="hero-title">
+        Gestión<br>
+        <em>circular </em>
+        de residuos.
+      </h1>
+      <p class="hero-sub">
+        EcoResidencial transforma el modelo insostenible de Medellín mediante tecnología IoT, rutas segregadas y educación comunitaria, convirtiendo los residuos de las copropiedades en economía circular real.
+      </p>
+      <div class="hero-cta">
+        <a href="#empresa" class="btn-verde">Ver el problema</a>
+        <a href="#equipo" class="btn-out">Nuestro equipo</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-n">704K</div>
+        <div class="hstat-l">toneladas de residuos<br>en Medellín (2024)</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-n">86%</div>
+        <div class="hstat-l">de residuos son<br>potencialmente aprovechables</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-n">68%</div>
+        <div class="hstat-l">capacidad de La Piñuela<br>ocupada para 2030</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- SOBRE LA EMPRESA -->
+<section class="s" id="empresa">
+  <p class="chip">Sobre la empresa</p>
+  <h2>Un modelo de gestión de residuos insostenible</h2>
+  <p class="lead">
+    Medellín se encuentra bajo un modelo de gestión de residuos ambiental, social y económicamente insostenible. Es urgente avanzar hacia la separación en la fuente y la valorización integral para evitar el colapso.
+  </p>
+
+  <div class="stat-grid">
+    <div class="stat-c">
+      <div class="stat-n">704.586</div>
+      <div class="stat-l">toneladas de residuos dispuestas en La Pradera en 2024</div>
+      <div class="stat-src">Fuente: SIEM, Alcaldía de Medellín 2025</div>
+    </div>
+    <div class="stat-c">
+      <div class="stat-n">86%</div>
+      <div class="stat-l">de los residuos residenciales son potencialmente aprovechables</div>
+      <div class="stat-src">Fuente: Alcaldía de Medellín, 2025</div>
+    </div>
+    <div class="stat-c">
+      <div class="stat-n">68%</div>
+      <div class="stat-l">de capacidad del relleno La Piñuela ocupada para 2030 si no se actúa</div>
+      <div class="stat-src">Fuente: Informe de Caracterización Residuos, 2025</div>
+    </div>
+    <div class="stat-c">
+      <div class="stat-n">0.47 kg</div>
+      <div class="stat-l">promedio diario de residuos generados por habitante</div>
+      <div class="stat-src">Fuente: Alcaldía de Medellín, 2025</div>
+    </div>
+  </div>
+
+  <div style="margin-top:3.5rem">
+    <p class="chip">Soluciones existentes</p>
+    <h2 style="font-size:1.9rem">¿Qué existe hoy<br>en la ciudad?</h2>
+    <p class="lead">Actualmente coexisten esfuerzos que resultan insuficientes para absorber el volumen masivo de las comunas de alta densidad de la ciudad.</p>
+  </div>
+  <div class="sol-grid">
+    <div class="sol-c">
+      <div class="sol-tag">Tradicional</div>
+      <h4>Rutas Emvarias</h4>
+      <p>Enfocadas en la recolección lineal y transporte masivo, sin incentivos fuertes para la separación selectiva previa en los hogares.</p>
+    </div>
+    <div class="sol-c">
+      <div class="sol-tag">Informal / Social</div>
+      <h4>Recicladores de Oficio</h4>
+      <p>Labor heroica pero fragmentada, con baja tecnología de pesaje y enfocada mayormente en materiales secos, dejando los orgánicos de lado.</p>
+    </div>
+    <div class="sol-c">
+      <div class="sol-tag">Comunitario</div>
+      <h4>Puntos Limpios</h4>
+      <p>Centros de acopio estáticos y proyectos piloto de baja escala que no logran captar los grandes volúmenes de urbanizaciones densas.</p>
+    </div>
+    <div class="sol-c">
+      <div class="sol-tag">Desafío Territorial</div>
+      <h4>Disparidad de Generación</h4>
+      <p>Brecha de 0.30 kg de residuos diarios por persona entre zonas (Nororiental vs Suroriental), exigiendo soluciones diferenciadas y focalizadas.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- PRODUCTOS Y SERVICIOS -->
+<section class="s" id="productos">
+  <p class="chip">Productos y Servicios</p>
+  <h2>¿A quién servimos<br>y cómo los ayudamos?</h2>
+
+  <!-- BUYER PERSONA -->
+  <div style="margin-top:2rem">
+    <p class="chip" style="color:#888;margin-bottom:1.2rem">Buyer Persona</p>
+    <div class="persona-wrap">
+      <div class="p-av">🏢</div>
+      <div>
+        <div class="p-name">Alejandro Mendoza Estrada</div>
+        <div class="p-meta">Administrador Profesional de Propiedad Horizontal · 38 años · Torres de Robledo</div>
+        <p style="font-size:.9rem;color:var(--texto-clr);margin-bottom:.5rem">
+          Alejandro es responsable de la gestión operativa, manejo de presupuesto de aseo y convivencia de 420 apartamentos. Se encuentra bajo presión constante por las quejas de olores en los depósitos de basura (shutes) y busca reducir los costos de la tarifa del servicio de aseo. Necesita implementar lineamientos reales de sostenibilidad exigidos por los copropietarios jóvenes, sin complicar más la logística interna.
+        </p>
+        <div class="p-tags">
+          <span class="tag">Economía circular</span>
+          <span class="tag">Reducción tarifa aseo</span>
+          <span class="tag">Basura Cero</span>
+          <span class="tag">Medellín / Valle Aburrá</span>
+          <span class="tag">Copropiedades B2B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNEY MAP -->
+  <div style="margin-top:3rem">
+    <p class="chip" style="color:#888;margin-bottom:.5rem">Journey Map</p>
+    <h2 style="font-size:1.9rem">El viaje de Alejandro</h2>
+    <p style="color:var(--texto-clr);margin-bottom:1.5rem">Desde la frustración del modelo tradicional hasta el control y ahorro con tecnología circular.</p>
+    <div class="journey-wrap">
+      <div class="journey-row">
+        <div class="j-step">
+          <div class="j-head">1. Concientización</div>
+          <div class="j-body">
+            <strong>¿Qué siente?</strong>
+            Lee el informe de residuos de la ciudad. Siente frustración ante la falta de una ruta selectiva pública eficaz en su zona.
+            <div class="emo">😟</div>
+          </div>
+        </div>
+        <div class="j-step">
+          <div class="j-head">2. Implementación Interna</div>
+          <div class="j-body">
+            <strong>¿Qué hace?</strong>
+            Instala canecas diferenciadas, pero por la baja cultura ciudadana, los residentes mezclan orgánicos y plásticos en los shutes.
+            <div class="emo">😫</div>
+          </div>
+        </div>
+        <div class="j-step">
+          <div class="j-head">3. Disposición Actual</div>
+          <div class="j-body">
+            <strong>¿Qué pasa?</strong>
+            El camión compacta todo. El esfuerzo se pierde, se generan malos olores y las tarifas de aseo suben por peso total dispuesto.
+            <div class="emo">😤</div>
+          </div>
+        </div>
+        <div class="j-step">
+          <div class="j-head">4. Integración</div>
+          <div class="j-body">
+            <strong>¿Qué logra?</strong>
+            Contrata EcoResidencial. Instala Bio-Básculas y establece la ruta segregada especializada para orgánicos y reciclables.
+            <div class="emo">🙂</div>
+          </div>
+        </div>
+        <div class="j-step">
+          <div class="j-head">5. Consolidación</div>
+          <div class="j-body">
+            <strong>¿Qué obtiene?</strong>
+            Monitorea en tiempo real el ahorro en tasa de aseo, embellece jardines con bio-abono gratuito y certifica la copropiedad.
+            <div class="emo">🤩</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPUESTA DE VALOR -->
+  <div style="margin-top:3.5rem">
+    <p class="chip" style="color:#888;margin-bottom:.5rem">Propuesta de Valor</p>
+    <h2 style="font-size:1.9rem">Lo que ofrecemos,<br>lo que resolvemos</h2>
+    <div class="val-grid">
+      <div class="val-col jobs">
+        <h4>🎯 Trabajos del Cliente</h4>
+        <ul>
+          <li>Gestionar eficientemente los residuos de la copropiedad</li>
+          <li>Mitigar problemas sanitarios internos (olores, plagas)</li>
+          <li>Reducir costos de mantenimiento comunes</li>
+          <li>Cumplir con la normatividad ambiental exigida</li>
+        </ul>
+      </div>
+      <div class="val-col pains">
+        <h4>⚡ Frustraciones (Pains)</h4>
+        <ul>
+          <li>Mezcla indiscriminada de basuras por parte de residentes</li>
+          <li>Sanciones potenciales o multas ambientales</li>
+          <li>El esfuerzo de separación se pierde en el camión recolector tradicional</li>
+          <li>Aumento en las facturas de aseo por cobro de peso total</li>
+        </ul>
+      </div>
+      <div class="val-col gains">
+        <h4>✦ Alegrías (Gains)</h4>
+        <ul>
+          <li>Disminución real y medible en facturación del servicio público</li>
+          <li>Entrega mensual gratuita de Bio-Abono para jardines de la unidad</li>
+          <li>Convertir el edificio en un referente de sostenibilidad en Medellín</li>
+          <li>Tablero digital de analítica de huella de carbono para asambleas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS (fondo verde) -->
+<div class="s-full">
+  <div class="s-full-inner">
+    <p class="chip chip-blanco">Nuestros Servicios</p>
+    <h2 class="blanco" style="margin-bottom:.8rem">Lo que hace EcoResidencial</h2>
+    <p class="lead lead-blanco" style="margin-bottom:2.5rem">Integración de logística, tecnología y educación para transformar copropiedades en sistemas circulares.</p>
+    <div class="serv-grid">
+      <div class="serv-c">
+        <span class="serv-ico">🚚</span>
+        <h4>Ruta Segregada Inteligente</h4>
+        <p>Servicio logístico programado con vehículos bi-compartimentados para separación estricta desde el origen, optimizado por zonas de densidad.</p>
+      </div>
+      <div class="serv-c">
+        <span class="serv-ico">⚖️</span>
+        <h4>Bio-Básculas IoT</h4>
+        <p>Hardware inteligente instalado en los cuartos de acopio. Registra automáticamente kilogramos de orgánicos y secos, enviando datos a la nube.</p>
+      </div>
+      <div class="serv-c">
+        <span class="serv-ico">👥</span>
+        <h4>Eco-Cultura Ciudadana</h4>
+        <p>Talleres lúdicos periódicos y sistema gamificado de incentivos internos para asegurar pureza en la separación del residuo superior al 90%.</p>
+      </div>
+      <div class="serv-c">
+        <span class="serv-ico">📊</span>
+        <h4>Analítica de Sostenibilidad</h4>
+        <p>Tablero digital de control (dashboard) para el administrador, con métricas de trazabilidad, ahorros financieros y huella de carbono evitada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- IMPACTO -->
+<section class="s s-alt" id="impacto">
+  <p class="chip">Impacto del Proyecto</p>
+  <h2>¿Por qué esto<br>importa para Medellín?</h2>
+  <p class="lead">
+    Implementar nuestro sistema subvierte directamente la crisis ambiental y logística proyectada para la ciudad de Medellín, generando valor en cuatro dimensiones clave.
+  </p>
+  <div class="imp-grid">
+    <div class="imp-c">
+      <div class="imp-n">01</div>
+      <h4>Mitigación de La Pradera</h4>
+      <p>Evitamos que el 86% de residuos aprovechables colapsen el vaso La Piñuela. Expandiendo el modelo a comunas foco, desviaremos +80.000 ton anuales.</p>
+    </div>
+    <div class="imp-c">
+      <div class="imp-n">02</div>
+      <h4>Reducción de Emisiones</h4>
+      <p>Transformar orgánicos por compostaje industrial reduce en un 75% la generación de lixiviados contaminantes y emisiones de metano frente a la disposición lineal.</p>
+    </div>
+    <div class="imp-c">
+      <div class="imp-n">03</div>
+      <h4>Impacto Social Inclusivo</h4>
+      <p>Articulamos a recicladores de oficio como aliados logísticos, dignificando su labor entregándoles materiales limpios y pesados con transparencia tecnológica.</p>
+    </div>
+    <div class="imp-c">
+      <div class="imp-n">04</div>
+      <h4>Activación Económica Local</h4>
+      <p>Convertimos el gasto del servicio de aseo en riqueza para Antioquia: los residuos mutan a bio-fertilizante altamente demandado por el sector agroindustrial.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- MODELO DE NEGOCIO -->
+<section class="s" id="modelo">
+  <p class="chip">Modelo de Negocio</p>
+  <h2>Business Model Canvas</h2>
+  <p class="lead">Los 9 elementos que estructuran técnica y financieramente nuestro sistema B2B.</p>
+
+  <div class="canvas-wrap">
+    <div class="cv cv-s">
+      <h5>🤝 Socios Clave</h5>
+      <ul>
+        <li>Asociaciones de Recicladores de Oficio Medellín</li>
+        <li>Plantas de compostaje industrial regionales</li>
+        <li>Alcaldía de Medellín y SIEM</li>
+        <li>Proveedores de hardware de pesaje IoT</li>
+      </ul>
+    </div>
+    <div class="cv cv-a">
+      <h5>⚙️ Actividades Clave</h5>
+      <ul>
+        <li>Logística selectiva y transporte optimizado</li>
+        <li>Procesamiento técnico de orgánicos (compostaje)</li>
+        <li>Educación comunitaria continua y gamificación</li>
+        <li>Mantenimiento de plataforma cloud IoT</li>
+      </ul>
+    </div>
+    <div class="cv cv-p">
+      <h5>💚 Propuesta de Valor</h5>
+      <ul>
+        <li>Sistema Integral Circular para Copropiedades</li>
+        <li>Incremento tasa aprovechamiento real >75%</li>
+        <li>Reducción verificable de tarifa de aseo</li>
+        <li>Erradicación de olores e insalubridad</li>
+        <li>Retribución con bio-abono y métricas en línea</li>
+      </ul>
+    </div>
+    <div class="cv cv-r">
+      <h5>❤️ Relación Clientes</h5>
+      <ul>
+        <li>Co-responsable y de estrecha colaboración</li>
+        <li>Asesoría presencial mensual técnica</li>
+        <li>Interacción digital mediante tablero de control</li>
+      </ul>
+    </div>
+    <div class="cv cv-c">
+      <h5>👥 Segmentos</h5>
+      <ul>
+        <li>Copropiedades residenciales cerradas</li>
+        <li>Administradores profesionales estrato 3 a 6</li>
+        <li>Comunas de alta generación (Robledo, El Poblado, etc.)</li>
+      </ul>
+    </div>
+    <div class="cv cv-rc">
+      <h5>🏗️ Recursos Clave</h5>
+      <ul>
+        <li>Flota adaptada con bi-compartimentos</li>
+        <li>Plataforma web/móvil basada en nube</li>
+        <li>Personal técnico ambiental y pedagogos</li>
+      </ul>
+    </div>
+    <div class="cv cv-cn">
+      <h5>📡 Canales</h5>
+      <ul>
+        <li>Venta B2B directa a administradores</li>
+        <li>Sitio interactivo (Wix) portal de clientes</li>
+        <li>Aplicación de monitoreo instalada in-situ</li>
+      </ul>
+    </div>
+    <div class="cv cv-co">
+      <h5>💸 Estructura de Costos</h5>
+      <ul>
+        <li>Operativos: Combustible, mantenimiento de flota y rutas</li>
+        <li>Personal: Conductores, gestores y educadores sociales</li>
+        <li>Tecnología: Sensores IoT y servidores en la nube</li>
+        <li>Procesamiento: Maquila en plantas de bio-valorización</li>
+      </ul>
+    </div>
+    <div class="cv cv-i">
+      <h5>💰 Fuentes de Ingresos</h5>
+      <ul>
+        <li>Suscripción Mensual B2B de Servicio Corporativo</li>
+        <li>Venta B2B de Bio-Fertilizantes y Compost</li>
+        <li>Comercialización de Materiales Secos consolidados</li>
+        <li>Consultorías de certificación "Basura Cero"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:3rem">
+    <p class="chip" style="margin-bottom:.8rem">¿Cómo ganamos dinero?</p>
+    <h2 style="font-size:1.9rem">Formas de monetización</h2>
+    <div class="din-grid">
+      <div class="din-c"><span class="din-ico">🏢</span><span>Suscripción B2B (tarifa fija a copropiedades)</span></div>
+      <div class="din-c"><span class="din-ico">🌱</span><span>Venta mayorista de Bio-Fertilizantes</span></div>
+      <div class="din-c"><span class="din-ico">📦</span><span>Comercialización de material reciclable seco de alta pureza</span></div>
+      <div class="din-c"><span class="din-ico">📋</span><span>Auditorías y consultorías "Basura Cero"</span></div>
+      <div class="din-c"><span class="din-ico">♻️</span><span>Patrocinios de marcas sostenibles (Green marketing)</span></div>
+      <div class="din-c"><span class="din-ico">📊</span><span>Servicios de analítica de datos ambientales a terceros</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOTIPO (fondo verde) -->
+<div class="s-full" id="prototipo">
+  <div class="s-full-inner">
+    <p class="chip chip-blanco">Prototipo <span style="color:rgba(255,255,255,.35)">(Opcional)</span></p>
+    <h2 class="blanco">Ver para creer</h2>
+    <p class="lead lead-blanco" style="margin-bottom:2rem">Demo visual de cómo nuestra Bio-Báscula y plataforma transforman la gestión de la copropiedad en tiempo real.</p>
+    <div class="proto-box">
+      <div class="proto-bdg">✦ Video generado con IA</div>
+      <h3>Del residuo lineal al circuito circular</h3>
+      <p>Insertar aquí el video de IA que muestra el recorrido del residuo desde el apartamento hasta la planta de compostaje.</p>
+      <div class="vid-ph">
+        <div class="play">▶</div>
+        <p>Insertar enlace YouTube / Vimeo aquí</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- EQUIPO -->
+<section class="s" id="equipo">
+  <p class="chip">Equipo de Trabajo</p>
+  <h2>Las personas detrás<br>de EcoResidencial</h2>
+  <p class="lead">Un equipo con experiencia en gestión pública, datos y tecnología empresarial, unidos por el propósito de transformar la gestión de residuos en Medellín.</p>
+
+  <div class="equipo-grid">
+
+    <!-- ANDRÉS FELIPE -->
+    <div class="eq-c">
+      <img class="eq-foto eq-foto-andres" src="./FOTO_ANDRES.jpg" alt="Andrés Felipe Álvarez Pérez" loading="lazy" decoding="async">
+      <div class="eq-body">
+        <div class="eq-nombre">Andrés Felipe Álvarez Pérez</div>
+        <div class="eq-rol">Estrategia & Gestión Pública · Co-fundador</div>
+        <p class="eq-bio">
+          Profesional en Administración Comercial y Mercadeo con más de 17 años de experiencia 
+          en los sectores público y privado. Jefe de Oficina Asesora de Planeación en la 
+          Contraloría Distrital de Medellín. Especializado en contratación estatal, gerencia de proyectos 
+          y analítica de datos aplicada a la transformación digital de procesos institucionales. 
+          Lidera la estrategia de relacionamiento institucional y el modelo de impacto de EcoResidencial.
+        </p>
+        <div class="eq-links">
+          <a href="https://linkedin.com/in/andresfelipealvarez" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- JHOSFER -->
+    <div class="eq-c">
+      <img class="eq-foto" src="./FOTO_JHOSFER.jpg" alt="Jhosfer Duarte Bustamante" loading="lazy" decoding="async">
+      <div class="eq-body">
+        <div class="eq-nombre">Jhosfer Duarte Bustamante</div>
+        <div class="eq-rol">Data Engineer & Tech Strategist · Co-fundador</div>
+        <p class="eq-bio">
+          Ingeniero con más de 7 años de experiencia co-liderando el diseño, automatización y 
+          optimización de arquitecturas de datos a nivel empresarial. Especializado en el ecosistema 
+          analítico de Microsoft (Fabric, Synapse, Power BI) y entornos de procesamiento avanzado 
+          en Python y PySpark. En EcoResidencial lidera la estrategia tecnológica, el despliegue de las 
+          Bio-Básculas IoT y la analítica para optimizar la cadena de valorización material en el Valle de Aburrá.
+        </p>
+        <div class="eq-links">
+          <a href="https://www.linkedin.com/in/jhosfer-duarte-bustamante-b4a055157/" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="div">
+
+<footer>
+  <div class="ft-logo">EcoResidencial ♻</div>
+  <p>Retos Medellín 2026 · Gestión de Residuos Sólidos · Economía Circular</p>
+  <p style="color:#aaa">Semana 15 — Empresarismo de Base Tecnológica 2026-1</p>
+</footer>
+
+</body>
+</html>
